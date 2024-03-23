@@ -1,0 +1,126 @@
+﻿@model IReadOnlyList<ArtVerse.Application.Students.DTOs.StudentDto>
+@{
+    ViewData["Title"] = "Quản Lý Học Viên";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h2 class="fw-bold mb-1">🎓 Danh Sách Học Viên</h2>
+            <p class="text-muted mb-0">Quản lý thông tin học viên, hồ sơ năng khiếu và portfolio tác phẩm.</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary px-4 shadow-sm">
+            <i class="bi bi-plus-lg me-1"></i> Thêm Học Viên Mới
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Search bar -->
+    <div class="card border-0 shadow-sm rounded-4 p-3 mb-4 bg-white">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-10">
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                    <input type="text" name="search" class="form-control border-start-0 ps-0" 
+                           placeholder="Tìm kiếm theo tên, mã học viên (SV-...), hoặc email..." value="@ViewBag.Search" />
+                </div>
+            </div>
+            <div class="col-md-2 d-grid">
+                <button type="submit" class="btn btn-dark">Tìm Kiếm</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Table -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Mã HV</th>
+                        <th>Họ và Tên</th>
+                        <th>Email & SĐT</th>
+                        <th>Giới tính</th>
+                        <th>Số tác phẩm</th>
+                        <th>Ngày tạo</th>
+                        <th class="text-end pe-4">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        @foreach (var student in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <span class="badge bg-light text-dark border font-monospace">@student.Code</span>
+                                </td>
+                                <td>
+                                    <div class="fw-bold">@student.FullName</div>
+                                </td>
+                                <td>
+                                    <div class="small">@student.Email</div>
+                                    <div class="text-muted small">@(student.Phone ?? "Chưa có SĐT")</div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info-subtle text-info border border-info-subtle">
+                                        @(student.Gender?.ToString() ?? "Chưa rõ")
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary rounded-pill">@student.ArtworkCount tác phẩm</span>
+                                </td>
+                                <td class="text-muted small">
+                                    @student.CreatedAt.ToString("dd/MM/yyyy")
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-action="Details" asp-route-id="@student.Id" class="btn btn-outline-primary" title="Xem chi tiết">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@student.Id" class="btn btn-outline-secondary" title="Sửa">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-2 text-secondary"></i>
+                                Không tìm thấy học viên nào.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (ViewBag.TotalPages > 1)
+        {
+            <div class="card-footer bg-white border-0 py-3 d-flex justify-content-between align-items-center">
+                <span class="small text-muted">Tổng cộng: @ViewBag.TotalCount học viên</span>
+                <nav>
+                    <ul class="pagination pagination-sm mb-0">
+                        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-search="@ViewBag.Search">@i</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        }
+    </div>
+</div>
