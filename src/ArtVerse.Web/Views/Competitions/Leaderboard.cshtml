@@ -1,0 +1,93 @@
+﻿@model IReadOnlyList<ArtVerse.Application.Competitions.DTOs.CompetitionEntryDto>
+@{
+    ViewData["Title"] = "Bảng Xếp Hạng Cuộc Thi";
+    var comp = ViewBag.Competition as ArtVerse.Domain.Entities.Competition;
+}
+
+<div class="container py-4">
+    <div class="mb-4">
+        <a asp-action="Details" asp-route-id="@comp?.Id" class="text-decoration-none text-muted small">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại thông tin cuộc thi
+        </a>
+    </div>
+
+    <div class="text-center py-4">
+        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill mb-2">🏆 BẢNG VINH DANH NGHỆ THUẬT</span>
+        <h2 class="fw-bold mb-1">@comp?.Title</h2>
+        <p class="text-muted">Tổng hợp kết quả đánh giá từ Ban giám khảo chuyên môn.</p>
+    </div>
+
+    <!-- Podium Top 3 -->
+    @if (Model.Count >= 3)
+    {
+        <div class="row justify-content-center align-items-end g-3 my-4 text-center">
+            <!-- Rank 2: Silver -->
+            <div class="col-4 col-md-3">
+                <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+                    <div class="fs-1">🥈</div>
+                    <h6 class="fw-bold mb-1 text-truncate">@Model[1].PaintingTitle</h6>
+                    <div class="text-muted small mb-2">@Model[1].StudentName</div>
+                    <span class="badge bg-secondary">@Model[1].AverageScore.ToString("0.0") đ</span>
+                </div>
+            </div>
+            <!-- Rank 1: Gold (Taller) -->
+            <div class="col-4 col-md-4">
+                <div class="card border-warning shadow rounded-4 p-4 bg-warning bg-opacity-10 border-2">
+                    <div class="fs-1">👑 🥇</div>
+                    <h5 class="fw-bold mb-1 text-truncate">@Model[0].PaintingTitle</h5>
+                    <div class="text-dark fw-medium mb-2">@Model[0].StudentName</div>
+                    <span class="badge bg-warning text-dark fs-6 px-3 py-2">Quán Quân: @Model[0].AverageScore.ToString("0.0") đ</span>
+                </div>
+            </div>
+            <!-- Rank 3: Bronze -->
+            <div class="col-4 col-md-3">
+                <div class="card border-0 shadow-sm rounded-4 p-3 bg-white">
+                    <div class="fs-1">🥉</div>
+                    <h6 class="fw-bold mb-1 text-truncate">@Model[2].PaintingTitle</h6>
+                    <div class="text-muted small mb-2">@Model[2].StudentName</div>
+                    <span class="badge bg-secondary">@Model[2].AverageScore.ToString("0.0") đ</span>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Full Table -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white mt-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Hạng</th>
+                        <th>Mã & Tác Phẩm</th>
+                        <th>Thí Sinh</th>
+                        <th>Chất Liệu</th>
+                        <th class="text-end pe-4">Điểm Tổng Kết</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                        var item = Model[i];
+                        <tr>
+                            <td class="ps-4 fw-bold">
+                                @if (i == 0) { <span class="badge bg-warning text-dark">#1</span> }
+                                else if (i == 1) { <span class="badge bg-secondary">#2</span> }
+                                else if (i == 2) { <span class="badge bg-dark">#3</span> }
+                                else { <span>#@(i + 1)</span> }
+                            </td>
+                            <td>
+                                <div class="fw-bold">@item.PaintingTitle</div>
+                                <span class="badge bg-light text-dark border font-monospace small">@item.EntryCode</span>
+                            </td>
+                            <td>@item.StudentName</td>
+                            <td><span class="badge bg-primary-subtle text-primary border border-primary-subtle">@item.Technique</span></td>
+                            <td class="text-end pe-4">
+                                <span class="fs-5 fw-bold text-success">@item.AverageScore.ToString("0.0") / 10</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
