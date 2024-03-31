@@ -1,0 +1,71 @@
+﻿@model IReadOnlyList<ArtVerse.Application.Competitions.DTOs.CompetitionDto>
+@{
+    ViewData["Title"] = "Cuộc Thi Mỹ Thuật & Hội Họa";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h2 class="fw-bold mb-1">🏆 Cuộc Thi Mỹ Thuật & Hội Họa</h2>
+            <p class="text-muted mb-0">Sân chơi nghệ thuật chuyên nghiệp nhằm phát hiện và tôn vinh những tài năng hội họa trẻ.</p>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        @if (Model.Any())
+        {
+            @foreach (var comp in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 p-4 bg-white d-flex flex-column competition-card">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="badge bg-light text-dark border font-monospace">@comp.Code</span>
+                            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-3 py-2 rounded-pill">
+                                🌟 @comp.Status
+                            </span>
+                        </div>
+
+                        <h4 class="fw-bold mb-2">@comp.Title</h4>
+                        <div class="text-primary fw-medium small mb-3">Chủ đề: @(comp.Theme ?? "Tự do")</div>
+                        <p class="text-muted small mb-4 flex-grow-1">@(comp.Description ?? "Cuộc thi thường niên của học viện...")</p>
+
+                        <div class="bg-light p-3 rounded-3 mb-4 small">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-muted">Hạn đăng ký:</span>
+                                <span class="fw-bold">@comp.RegistrationEnd.ToString("dd/MM/yyyy")</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Số bài dự thi:</span>
+                                <span class="fw-bold text-primary">@comp.EntryCount tác phẩm</span>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <a asp-action="Details" asp-route-id="@comp.Id" class="btn btn-dark">
+                                Xem Thể Lệ & Bài Dự Thi
+                            </a>
+                            <a asp-action="SubmitEntry" asp-route-id="@comp.Id" class="btn btn-outline-primary">
+                                <i class="bi bi-send me-1"></i> Nộp Bài Dự Thi
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center py-5 text-muted">
+                <i class="bi bi-trophy fs-1 d-block mb-3 text-secondary"></i>
+                <h5>Hiện tại chưa có cuộc thi nào mở đăng ký.</h5>
+            </div>
+        }
+    </div>
+</div>

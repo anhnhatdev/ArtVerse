@@ -1,0 +1,126 @@
+﻿@model ArtVerse.Domain.Entities.Competition
+@{
+    ViewData["Title"] = Model.Title + " - Thể Lệ & Chi Tiết";
+    var entries = ViewBag.Entries as IReadOnlyList<ArtVerse.Application.Competitions.DTOs.CompetitionEntryDto> ?? new List<ArtVerse.Application.Competitions.DTOs.CompetitionEntryDto>();
+}
+
+<div class="container py-4">
+    <div class="mb-4">
+        <a asp-action="Index" class="text-decoration-none text-muted small">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách cuộc thi
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+            <span class="badge bg-light text-dark border font-monospace fs-6">@Model.Code</span>
+            <div class="d-flex gap-2">
+                <a asp-action="Leaderboard" asp-route-id="@Model.Id" class="btn btn-warning px-3 shadow-sm">
+                    <i class="bi bi-bar-chart-line-fill me-1"></i> Bảng Xếp Hạng
+                </a>
+                <a asp-action="SubmitEntry" asp-route-id="@Model.Id" class="btn btn-primary px-4 shadow-sm">
+                    <i class="bi bi-send me-1"></i> Nộp Bài Dự Thi
+                </a>
+            </div>
+        </div>
+
+        <h2 class="fw-bold mb-2">@Model.Title</h2>
+        <h5 class="text-primary mb-3">Chủ đề: @(Model.Theme ?? "Tự do sáng tạo")</h5>
+        <p class="lead text-muted fs-6 mb-4">@Model.Description</p>
+
+        <hr class="my-4" />
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <h5 class="fw-bold mb-3">📋 Tiêu Chí Chấm Điểm (Rubric Chuyên Nghiệp)</h5>
+                <div class="list-group list-group-flush rounded-3 border">
+                    @foreach (var crit in Model.Criteria)
+                    {
+                        <div class="list-group-item d-flex justify-content-between align-items-center p-3">
+                            <div>
+                                <div class="fw-bold">@crit.Name</div>
+                                <div class="text-muted small">@crit.Description</div>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-primary rounded-pill">Thang @crit.MaxScore đ</span>
+                                <div class="text-muted small">Trọng số: @((crit.Weight * 100).ToString("0"))%</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <h5 class="fw-bold mb-3">⏱️ Mốc Thời Gian Cuộc Thi</h5>
+                <div class="p-3 bg-light rounded-4">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2 d-flex justify-content-between">
+                            <span class="text-muted">Mở đăng ký:</span>
+                            <span class="fw-bold">@Model.RegistrationStart.ToString("dd/MM/yyyy")</span>
+                        </li>
+                        <li class="mb-2 d-flex justify-content-between">
+                            <span class="text-muted">Đóng đăng ký:</span>
+                            <span class="fw-bold">@Model.RegistrationEnd.ToString("dd/MM/yyyy")</span>
+                        </li>
+                        <li class="mb-2 d-flex justify-content-between">
+                            <span class="text-muted">Hạn nộp tác phẩm:</span>
+                            <span class="fw-bold text-danger">@Model.SubmissionEnd.ToString("dd/MM/yyyy")</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submissions list -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="fw-bold mb-0">🎨 Tác Phẩm Đã Nộp Dự Thi (@entries.Count)</h4>
+            <a asp-action="Leaderboard" asp-route-id="@Model.Id" class="btn btn-outline-dark btn-sm">Xem Top Điểm</a>
+        </div>
+
+        <div class="row g-3">
+            @if (entries.Any())
+            {
+                @foreach (var entry in entries)
+                {
+                    <div class="col-md-4 col-sm-6">
+                        <div class="card h-100 border rounded-3 p-3 bg-light">
+                            <div class="d-flex gap-3 align-items-center mb-2">
+                                <div style="width: 50px; height: 50px;" class="rounded-3 overflow-hidden bg-white">
+                                    <img src="@(entry.PaintingImageUrl ?? "/favicon.ico")" class="w-100 h-100 object-fit-cover" alt="@entry.PaintingTitle" />
+                                </div>
+                                <div class="overflow-hidden">
+                                    <h6 class="fw-bold mb-0 text-truncate">@entry.PaintingTitle</h6>
+                                    <span class="text-muted small">@entry.StudentName</span>
+                                </div>
+                            </div>
+                            <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top">
+                                <span class="badge bg-success-subtle text-success border border-success-subtle">
+                                    Điểm: @entry.AverageScore.ToString("0.0")/10
+                                </span>
+                                <a asp-action="JudgingRoom" asp-route-entryId="@entry.Id" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-pencil-square me-1"></i> Chấm Thi
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12 text-center py-4 text-muted">
+                    Chưa có bài thi nào được nộp. Hãy là người đầu tiên tham gia!
+                </div>
+            }
+        </div>
+    </div>
+</div>
