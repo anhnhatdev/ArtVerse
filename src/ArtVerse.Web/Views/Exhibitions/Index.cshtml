@@ -1,0 +1,71 @@
+﻿@model IReadOnlyList<ArtVerse.Application.Exhibitions.DTOs.ExhibitionDto>
+@{
+    ViewData["Title"] = "Không Gian Triển Lãm & Sự Kiện Nghệ Thuật";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h2 class="fw-bold mb-1">🏛️ Không Gian Triển Lãm & Sự Kiện</h2>
+            <p class="text-muted mb-0">Khám phá các buổi triển lãm chuyên đề, thưởng lãm và giao dịch tác phẩm độc bản.</p>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        @if (Model.Any())
+        {
+            @foreach (var ex in Model)
+            {
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden bg-white d-flex flex-column exhibition-card">
+                        <div class="p-4 flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-light text-dark border font-monospace">@ex.Code</span>
+                                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
+                                    ● Đang Mở Cửa
+                                </span>
+                            </div>
+
+                            <h3 class="fw-bold mb-2">@ex.Title</h3>
+                            <p class="text-muted small mb-3">@(ex.Description ?? "Sự kiện trưng bày nghệ thuật quy mô lớn...")</p>
+
+                            <div class="bg-light p-3 rounded-3 mb-3 small">
+                                <div class="mb-1"><i class="bi bi-geo-alt-fill text-danger me-1"></i> <strong>Địa điểm:</strong> @(ex.Venue ?? "ArtVerse Gallery Main Hall")</div>
+                                <div><i class="bi bi-calendar-event text-primary me-1"></i> <strong>Thời gian:</strong> @ex.StartDate.ToString("dd/MM/yyyy") - @ex.EndDate.ToString("dd/MM/yyyy")</div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer bg-white border-top p-3 d-flex justify-content-between align-items-center">
+                            <span class="badge bg-primary rounded-pill px-3 py-2">
+                                🖼️ @ex.ArtworkCount Tác phẩm
+                            </span>
+                            <div class="d-flex gap-2">
+                                <a asp-action="Curator" asp-route-id="@ex.Id" class="btn btn-outline-secondary btn-sm">
+                                    <i class="bi bi-gear me-1"></i> Tuyển Chọn
+                                </a>
+                                <a asp-action="Showcase" asp-route-id="@ex.Id" class="btn btn-primary btn-sm px-3 shadow-sm">
+                                    Vào Thưởng Lãm <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center py-5 text-muted">
+                <i class="bi bi-building fs-1 d-block mb-3 text-secondary"></i>
+                <h5>Hiện tại chưa có triển lãm nào diễn ra.</h5>
+            </div>
+        }
+    </div>
+</div>
