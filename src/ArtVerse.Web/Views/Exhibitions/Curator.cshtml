@@ -1,0 +1,45 @@
+﻿@model ArtVerse.Domain.Entities.Exhibition
+@{
+    ViewData["Title"] = "Tuyển Chọn Tác Phẩm Triển Lãm - " + Model.Title;
+}
+
+<div class="container py-4" style="max-width: 750px;">
+    <div class="mb-4">
+        <a asp-action="Showcase" asp-route-id="@Model.Id" class="text-decoration-none text-muted small">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại gian triển lãm
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success rounded-3 mb-4">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+        </div>
+    }
+
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+        <h3 class="fw-bold mb-1">🖼️ Hội đồng Tuyển chọn Nghệ thuật (Curator)</h3>
+        <p class="text-muted small mb-4">Chọn tác phẩm đã được duyệt để đưa vào danh mục trưng bày tại <strong>@Model.Title</strong>.</p>
+
+        <form asp-action="CurateArtwork" method="post">
+            <input type="hidden" name="exhibitionId" value="@Model.Id" />
+
+            <div class="mb-3">
+                <label class="form-label fw-medium">Chọn tác phẩm từ kho nghệ thuật <span class="text-danger">*</span></label>
+                <select name="paintingId" asp-items="ViewBag.Paintings" class="form-select form-select-lg" required>
+                    <option value="">-- Chọn tác phẩm đã duyệt --</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-medium">Thứ tự ưu tiên hiển thị (Display Order)</label>
+                <input type="number" name="displayOrder" class="form-control" value="@(Model.Artworks.Count + 1)" />
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+                <a asp-action="Showcase" asp-route-id="@Model.Id" class="btn btn-light px-4">Đóng</a>
+                <button type="submit" class="btn btn-primary px-4 shadow-sm">Thêm Vào Triển Lãm</button>
+            </div>
+        </form>
+    </div>
+</div>
