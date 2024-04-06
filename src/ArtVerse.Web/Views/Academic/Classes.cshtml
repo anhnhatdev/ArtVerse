@@ -1,0 +1,114 @@
+﻿@model IReadOnlyList<ArtVerse.Application.Academic.DTOs.ClassDto>
+@{
+    ViewData["Title"] = "Quản Lý Lớp Học & Khóa Học";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h2 class="fw-bold mb-1">📚 Quản Lý Lớp Học & Khóa Đào Tạo</h2>
+            <p class="text-muted mb-0">Quản lý danh sách lớp chuyên ngành, sĩ số và lộ trình học tập tại viện nghệ thuật.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Subjects" class="btn btn-outline-secondary px-3">
+                <i class="bi bi-journal-bookmark me-1"></i> Môn Học Đào Tạo
+            </a>
+            <button class="btn btn-primary px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#createClassModal">
+                <i class="bi bi-plus-lg me-1"></i> Mở Lớp Học Mới
+            </button>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        @if (Model.Any())
+        {
+            @foreach (var c in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 p-4 bg-white d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge bg-light text-dark border font-monospace">@c.Code</span>
+                            <span class="badge bg-info-subtle text-info border border-info-subtle px-3 py-1 rounded-pill">
+                                Năm @c.Year - Kỳ @c.Semester
+                            </span>
+                        </div>
+
+                        <h4 class="fw-bold mb-2">@c.Name</h4>
+                        
+                        <div class="bg-light p-3 rounded-3 mb-4 mt-auto">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-muted small">Sĩ số học viên:</span>
+                                <span class="fw-bold text-primary">@c.EnrolledCount / @c.MaxStudents Học viên</span>
+                            </div>
+                            <div class="progress mt-2" style="height: 6px;">
+                                <div class="progress-bar bg-primary" role="progressbar" 
+                                     style="width: @(c.MaxStudents > 0 ? (c.EnrolledCount * 100 / c.MaxStudents) : 0)%;"></div>
+                            </div>
+                        </div>
+
+                        <a asp-action="ClassDetails" asp-route-id="@c.Id" class="btn btn-dark w-100">
+                            Danh Sách Lớp & Phân Bổ <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center py-5 text-muted">
+                <i class="bi bi-mortarboard fs-1 d-block mb-3 text-secondary"></i>
+                <h5>Chưa có lớp học nào được mở. Bấm "Mở Lớp Học Mới" để bắt đầu.</h5>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Modal Create Class -->
+<div class="modal fade" id="createClassModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content border-0 shadow rounded-4">
+            <form asp-action="CreateClass" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Mở Lớp Học Chuyên Ngành Mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">Mã Lớp</label>
+                        <input type="text" name="code" class="form-control" placeholder="Ví dụ: ART-2026-K1" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">Tên Lớp Học</label>
+                        <input type="text" name="name" class="form-control" placeholder="Ví dụ: Hội Họa Sơn Dầu Nâng Cao K1" required />
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-medium">Năm Học</label>
+                            <input type="number" name="year" class="form-control" value="2026" required />
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-medium">Học Kỳ</label>
+                            <input type="number" name="semester" class="form-control" value="1" min="1" max="8" required />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">Sĩ Số Tối Đa</label>
+                        <input type="number" name="maxStudents" class="form-control" value="30" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary px-4">Tạo Lớp</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

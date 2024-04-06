@@ -1,0 +1,105 @@
+﻿@model IReadOnlyList<ArtVerse.Application.Academic.DTOs.SubjectDto>
+@{
+    ViewData["Title"] = "Khung Chương Trình & Môn Học Đào Tạo";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h2 class="fw-bold mb-1">🎨 Khung Chương Trình & Môn Học</h2>
+            <p class="text-muted mb-0">Hệ thống môn học chuyên ngành mỹ thuật, đồ họa và hội họa ứng dụng.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Classes" class="btn btn-outline-secondary px-3">
+                <i class="bi bi-arrow-left me-1"></i> Danh Sách Lớp
+            </a>
+            <button class="btn btn-primary px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#createSubjectModal">
+                <i class="bi bi-plus-lg me-1"></i> Thêm Môn Học Mới
+            </button>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Mã Môn</th>
+                        <th>Tên Môn Học</th>
+                        <th>Mô Tả Chuyên Đề</th>
+                        <th class="text-end pe-4">Số Tín Chỉ / Giờ Học</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        @foreach (var sub in Model)
+                        {
+                            <tr>
+                                <td class="ps-4"><span class="badge bg-light text-dark border font-monospace">@sub.Code</span></td>
+                                <td class="fw-bold">@sub.Name</td>
+                                <td class="text-muted small">@(sub.Description ?? "Môn học nền tảng mỹ thuật...")</td>
+                                <td class="text-end pe-4">
+                                    <span class="badge bg-primary rounded-pill px-3 py-2">@sub.CreditHours Tín chỉ</span>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center py-5 text-muted">
+                                <i class="bi bi-journal-text fs-1 d-block mb-2 text-secondary"></i>
+                                Chưa có môn học nào được thiết lập.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Create Subject -->
+<div class="modal fade" id="createSubjectModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content border-0 shadow rounded-4">
+            <form asp-action="CreateSubject" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Thêm Môn Học Mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">Mã Môn Học</label>
+                        <input type="text" name="code" class="form-control" placeholder="Ví dụ: ART101" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">Tên Môn Học</label>
+                        <input type="text" name="name" class="form-control" placeholder="Ví dụ: Hình Họa & Bố Cục Cơ Bản" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">Số Tín Chỉ / Số Giờ</label>
+                        <input type="number" name="creditHours" class="form-control" value="3" min="1" max="10" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-medium">Mô Tả</label>
+                        <textarea name="description" class="form-control" rows="3" placeholder="Nội dung chuyên môn của học phần..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary px-4">Tạo Môn Học</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
