@@ -1,0 +1,165 @@
+﻿@model ArtVerse.Application.Admin.DTOs.AnalyticsDataDto
+@{
+    ViewData["Title"] = "Trung Tâm Điều Hành & Thống Kê ArtVerse";
+}
+
+<div class="container-fluid py-4 px-lg-5">
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <div>
+            <h2 class="fw-bold mb-1">📊 Trung Tâm Điều Hành & Phân Tích Dữ Liệu</h2>
+            <p class="text-muted mb-0">Tổng quan các chỉ số vận hành toàn viện, hoạt động hội họa và giao dịch nghệ thuật.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-controller="Artworks" asp-action="ReviewQueue" class="btn btn-warning px-3 shadow-sm">
+                <i class="bi bi-clock-history me-1"></i> Duyệt Tranh (@Model.Stats.PendingReviews)
+            </a>
+            <a asp-controller="Students" asp-action="Create" class="btn btn-primary px-3 shadow-sm">
+                <i class="bi bi-plus-lg me-1"></i> Thêm Học Viên
+            </a>
+        </div>
+    </div>
+
+    <!-- KPI Metric Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small">Tổng Số Học Viên</span>
+                        <h3 class="fw-bold mb-0 text-primary">@Model.Stats.TotalStudents</h3>
+                    </div>
+                    <div class="bg-primary-subtle text-primary p-3 rounded-4 fs-4">
+                        👨‍🎓
+                    </div>
+                </div>
+                <div class="mt-3 small text-success">
+                    <i class="bi bi-arrow-up-right"></i> +12% so với tháng trước
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small">Tác Phẩm Sáng Tác</span>
+                        <h3 class="fw-bold mb-0 text-success">@Model.Stats.TotalArtworks</h3>
+                    </div>
+                    <div class="bg-success-subtle text-success p-3 rounded-4 fs-4">
+                        🎨
+                    </div>
+                </div>
+                <div class="mt-3 small text-muted">
+                    <span>Đang chờ duyệt: <strong>@Model.Stats.PendingReviews</strong></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small">Cuộc Thi & Triển Lãm</span>
+                        <h3 class="fw-bold mb-0 text-warning">@(Model.Stats.TotalCompetitions + Model.Stats.TotalExhibitions)</h3>
+                    </div>
+                    <div class="bg-warning-subtle text-warning-emphasis p-3 rounded-4 fs-4">
+                        🏆
+                    </div>
+                </div>
+                <div class="mt-3 small text-muted">
+                    @Model.Stats.TotalCompetitions cuộc thi | @Model.Stats.TotalExhibitions triển lãm
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-white h-100">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small">Giá Trị Tranh Niêm Yết</span>
+                        <h3 class="fw-bold mb-0 text-danger">@Model.Stats.TotalArtworkValue.ToString("N0") đ</h3>
+                    </div>
+                    <div class="bg-danger-subtle text-danger p-3 rounded-4 fs-4">
+                        💎
+                    </div>
+                </div>
+                <div class="mt-3 small text-success">
+                    <i class="bi bi-graph-up"></i> Sàn giao dịch mở
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ApexCharts Visualization Section -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">📈 Tăng Trưởng Tác Phẩm Sáng Tác Theo Tháng</h5>
+                    <span class="badge bg-light text-dark border">Năm 2025 - 2026</span>
+                </div>
+                <div id="monthlyChart" style="height: 320px;"></div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">🎯 Phân Bố Chất Liệu</h5>
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle">Kỹ Thuật</span>
+                </div>
+                <div id="techniqueChart" style="height: 320px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // 1. Monthly Area Chart
+            var monthlyOptions = {
+                series: [{
+                    name: "Số Tác Phẩm",
+                    data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthlyCounts))
+                }],
+                chart: {
+                    type: 'area',
+                    height: 300,
+                    toolbar: { show: false }
+                },
+                colors: ['#4f46e5'],
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shadeIntensity: 1,
+                        opacityFrom: 0.5,
+                        opacityTo: 0.05,
+                        stops: [0, 90, 100]
+                    }
+                },
+                dataLabels: { enabled: false },
+                stroke: { curve: 'smooth', width: 3 },
+                xaxis: {
+                    categories: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.MonthlyLabels))
+                }
+            };
+            new ApexCharts(document.querySelector("#monthlyChart"), monthlyOptions).render();
+
+            // 2. Technique Donut Chart
+            var techOptions = {
+                series: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.TechniqueCounts)),
+                chart: {
+                    type: 'donut',
+                    height: 300
+                },
+                labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.TechniqueLabels)),
+                colors: ['#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6'],
+                legend: { position: 'bottom' },
+                dataLabels: { enabled: false }
+            };
+            new ApexCharts(document.querySelector("#techniqueChart"), techOptions).render();
+        });
+    </script>
+}
