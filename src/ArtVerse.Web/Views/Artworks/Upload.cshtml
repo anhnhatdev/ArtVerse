@@ -1,0 +1,81 @@
+﻿@using ArtVerse.Domain.Enums
+@{
+    ViewData["Title"] = "Tải Lên Tác Phẩm Mới";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h4 class="fw-bold mb-0 text-dark"><i class="bi bi-cloud-arrow-up text-primary me-2"></i>Đăng Ký Bản Quyền & Tải Lên Tác Phẩm</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-controller="Artworks" asp-action="Upload" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Tên Tác Phẩm <span class="text-danger">*</span></label>
+                            <input type="text" name="title" class="form-control" placeholder="Ví dụ: Hoàng Hôn Trên Sông Hương" required />
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Học Viên Sáng Tác <span class="text-danger">*</span></label>
+                                <select name="studentId" class="form-select" asp-items="ViewBag.Students" required></select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Chất Liệu & Kỹ Thuật <span class="text-danger">*</span></label>
+                                <select name="technique" class="form-select">
+                                    <option value="@((int)ArtTechnique.OilPainting)">Sơn Dầu (Oil Painting)</option>
+                                    <option value="@((int)ArtTechnique.Watercolor)">Màu Nước (Watercolor)</option>
+                                    <option value="@((int)ArtTechnique.Acrylic)">Acrylic</option>
+                                    <option value="@((int)ArtTechnique.Digital)">Kỹ Thuật Số (Digital Art)</option>
+                                    <option value="@((int)ArtTechnique.Sculpture)">Điêu Khắc (Sculpture)</option>
+                                    <option value="@((int)ArtTechnique.Mixed)">Tổng Hợp (Mixed Media)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Tệp Ảnh Tác Phẩm HD <span class="text-danger">*</span></label>
+                            <input type="file" name="imageFile" class="form-control" accept="image/png, image/jpeg, image/webp" required />
+                            <div class="form-text">Hỗ trợ JPG, PNG, WEBP. Dung lượng tối đa 10MB.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Mô Tả Ý Niệm Nghệ Thuật</label>
+                            <textarea name="description" class="form-control" rows="4" placeholder="Chia sẻ về thông điệp, cảm hứng và quá trình sáng tác tác phẩm..."></textarea>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Năm Sáng Tác</label>
+                                <input type="number" name="createdYear" class="form-control" value="2026" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Niêm Yết Thương Mại</label>
+                                <div class="form-check form-switch mt-2">
+                                    <input class="form-check-input" type="checkbox" name="isForSale" value="true" id="isForSale" checked>
+                                    <label class="form-check-label" for="isForSale">Mở bán tác phẩm</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Giá Niêm Yết (VNĐ)</label>
+                                <input type="number" name="basePrice" class="form-control" placeholder="15000000" />
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-controller="Artworks" asp-action="Index" class="btn btn-light px-4">Hủy bỏ</a>
+                            <button type="submit" class="btn btn-dark px-4 fw-bold">
+                                <i class="bi bi-send me-1"></i> Nộp Tác Phẩm Lên Hội Đồng
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

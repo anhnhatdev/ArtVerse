@@ -1,0 +1,85 @@
+﻿@model IReadOnlyList<ArtVerse.Application.Paintings.DTOs.PaintingDto>
+@{
+    ViewData["Title"] = "Hàng Đợi Duyệt Tác Phẩm";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1"><i class="bi bi-shield-check text-primary me-2"></i>Hàng Đợi Phê Duyệt Tác Phẩm</h3>
+            <p class="text-muted small mb-0">Dành riêng cho Hội đồng nghệ thuật thẩm định và xét duyệt chất lượng tranh trước khi công bố.</p>
+        </div>
+        <span class="badge bg-warning text-dark fs-6 px-3 py-2">
+            <i class="bi bi-clock-history me-1"></i> @Model.Count tác phẩm chờ duyệt
+        </span>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card shadow-sm border-0 text-center py-5 rounded-4">
+            <i class="bi bi-check2-all text-success display-4 mb-3"></i>
+            <h5 class="fw-bold">Tuyệt vời! Không có tác phẩm nào đang chờ duyệt.</h5>
+            <p class="text-muted">Tất cả tác phẩm gửi lên đều đã được thẩm định hoàn tất.</p>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+                        <div class="position-relative" style="height: 220px;">
+                            <img src="@(string.IsNullOrEmpty(item.PrimaryImageUrl) ? "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=500" : item.PrimaryImageUrl)" 
+                                 class="w-100 h-100 object-fit-cover" alt="@item.Title" />
+                            <span class="position-absolute top-0 start-0 m-2 badge bg-warning text-dark">Chờ Duyệt</span>
+                        </div>
+                        <div class="card-body p-3">
+                            <h5 class="fw-bold text-truncate mb-1">@item.Title</h5>
+                            <p class="text-muted small mb-2"><i class="bi bi-person me-1"></i>Tác giả: <strong>@item.StudentName</strong></p>
+                            <div class="d-flex justify-content-between small text-secondary mb-3">
+                                <span><i class="bi bi-brush me-1"></i>@item.Technique</span>
+                                <span><i class="bi bi-calendar me-1"></i>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <form asp-controller="Artworks" asp-action="Approve" asp-route-id="@item.Id" method="post" class="w-50">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-success btn-sm w-100 fw-bold">
+                                        <i class="bi bi-check-lg"></i> Duyệt Tranh
+                                    </button>
+                                </form>
+                                <button type="button" class="btn btn-outline-danger btn-sm w-50 fw-bold" data-bs-toggle="modal" data-bs-target="#rejectModal-@item.Id">
+                                    <i class="bi bi-x-lg"></i> Từ Chối
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rejection Modal -->
+                <div class="modal fade" id="rejectModal-@item.Id" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content border-0 shadow rounded-4">
+                            <div class="modal-header bg-danger text-white rounded-top-4">
+                                <h5 class="modal-title fw-bold"><i class="bi bi-x-circle me-2"></i>Từ Chối Tác Phẩm: @item.Title</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <form asp-controller="Artworks" asp-action="Reject" asp-route-id="@item.Id" method="post">
+                                @Html.AntiForgeryToken()
+                                <div class="modal-body p-4">
+                                    <label class="form-label fw-semibold">Lý do từ chối chuyên môn <span class="text-danger">*</span></label>
+                                    <textarea name="reason" class="form-control" rows="3" placeholder="Nhập lý do (ví dụ: Hình ảnh mờ, chưa đạt tiêu chuẩn kỹ thuật phối màu...)" required></textarea>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Đóng</button>
+                                    <button type="submit" class="btn btn-danger fw-bold">Xác Nhận Từ Chối</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
