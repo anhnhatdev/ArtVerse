@@ -1,0 +1,82 @@
+﻿@{
+    ViewData["Title"] = "Đăng Nhập Hệ Thống";
+    var returnUrl = ViewBag.ReturnUrl as string;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-dark text-white text-center py-4 rounded-top-4">
+                    <h3 class="fw-bold mb-1"><i class="bi bi-shield-lock me-2 text-warning"></i>ArtVerse Login</h3>
+                    <p class="text-secondary small mb-0">Hệ Thống Quản Trị Viện Mỹ Thuật & Triển Lãm Số</p>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger py-2 small mb-4">
+                            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                            {
+                                <div><i class="bi bi-exclamation-circle me-1"></i>@error.ErrorMessage</div>
+                            }
+                        </div>
+                    }
+
+                    <form asp-controller="Auth" asp-action="Login" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="returnUrl" value="@returnUrl" />
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Email / Tài khoản</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-envelope"></i></span>
+                                <input type="email" name="email" class="form-control" placeholder="admin@artverse.com" required />
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold">Mật khẩu</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-key"></i></span>
+                                <input type="password" name="password" class="form-control" placeholder="••••••••" required />
+                            </div>
+                        </div>
+
+                        <div class="mb-4 form-check">
+                            <input type="checkbox" name="rememberMe" value="true" class="form-check-input" id="rememberMe" />
+                            <label class="form-check-label small" for="rememberMe">Ghi nhớ đăng nhập trên thiết bị này</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-dark w-100 py-2 fw-bold shadow-sm">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Đăng Nhập
+                        </button>
+                    </form>
+
+                    <hr class="my-4" />
+
+                    <!-- Quick Switch demo buttons -->
+                    <div class="text-center">
+                        <p class="small text-muted fw-semibold mb-2">⚡ Đăng Nhập Nhanh (Dành cho Kiểm Thử & Chấm Bài):</p>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                            <form asp-controller="Auth" asp-action="QuickLogin" method="post">
+                                <input type="hidden" name="role" value="Admin" />
+                                <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                <button type="submit" class="btn btn-sm btn-outline-danger">👑 Admin</button>
+                            </form>
+                            <form asp-controller="Auth" asp-action="QuickLogin" method="post">
+                                <input type="hidden" name="role" value="Staff" />
+                                <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                <button type="submit" class="btn btn-sm btn-outline-primary">👨‍🏫 Giảng Viên/Giám Khảo</button>
+                            </form>
+                            <form asp-controller="Auth" asp-action="QuickLogin" method="post">
+                                <input type="hidden" name="role" value="Student" />
+                                <input type="hidden" name="returnUrl" value="@returnUrl" />
+                                <button type="submit" class="btn btn-sm btn-outline-success">👨‍🎓 Học Viên</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,108 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using ArtVerse.Infrastructure.Data
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<ul class="navbar-nav align-items-center">
+@if (SignInManager.IsSignedIn(User))
+{
+    var user = await UserManager.GetUserAsync(User);
+    var roleBadge = "secondary";
+    var roleName = "Member";
+    if (User.IsInRole("Admin")) { roleBadge = "danger"; roleName = "Admin"; }
+    else if (User.IsInRole("Principal")) { roleBadge = "warning text-dark"; roleName = "Principal"; }
+    else if (User.IsInRole("Staff")) { roleBadge = "primary"; roleName = "Staff/Giảng Viên"; }
+    else if (User.IsInRole("Student")) { roleBadge = "success"; roleName = "Học Viên"; }
+
+    <li class="nav-item dropdown me-2">
+        <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle fs-5"></i>
+            <span class="fw-semibold">@(user?.FullName ?? User.Identity?.Name)</span>
+            <span class="badge bg-@roleBadge small">@roleName</span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+            <li class="px-3 py-2 text-muted small border-bottom">
+                <i class="bi bi-envelope me-1"></i> @User.Identity?.Name
+            </li>
+            @if (User.IsInRole("Admin") || User.IsInRole("Principal") || User.IsInRole("Manager"))
+            {
+                <li><a class="dropdown-item" asp-controller="Admin" asp-action="Dashboard"><i class="bi bi-speedometer2 me-2"></i>Trung Tâm Quản Trị</a></li>
+            }
+            @if (User.IsInRole("Admin") || User.IsInRole("Principal") || User.IsInRole("Staff"))
+            {
+                <li><a class="dropdown-item" asp-controller="Artworks" asp-action="ReviewQueue"><i class="bi bi-check2-circle me-2"></i>Hàng Đợi Duyệt Tranh</a></li>
+                <li><a class="dropdown-item" asp-controller="Academic" asp-action="Classes"><i class="bi bi-mortarboard me-2"></i>Quản Lý Đào Tạo</a></li>
+            }
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right me-2"></i>Đăng Xuất</button>
+                </form>
+            </li>
+        </ul>
+    </li>
+
+    <!-- Quick Switcher Dropdown for Testing -->
+    <li class="nav-item dropdown">
+        <button class="btn btn-sm btn-outline-warning dropdown-toggle" type="button" data-bs-toggle="dropdown">
+            <i class="bi bi-arrow-repeat me-1"></i> Đổi Role Nhanh
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+            <li><h6 class="dropdown-header">Chuyển sang tài khoản:</h6></li>
+            <li>
+                <form asp-controller="Auth" asp-action="QuickLogin" method="post">
+                    <input type="hidden" name="role" value="Admin" />
+                    <button type="submit" class="dropdown-item text-danger"><i class="bi bi-shield-fill-check me-2"></i>👑 Super Admin</button>
+                </form>
+            </li>
+            <li>
+                <form asp-controller="Auth" asp-action="QuickLogin" method="post">
+                    <input type="hidden" name="role" value="Staff" />
+                    <button type="submit" class="dropdown-item text-primary"><i class="bi bi-person-video3 me-2"></i>👨‍🏫 Giảng Viên / Giám Khảo</button>
+                </form>
+            </li>
+            <li>
+                <form asp-controller="Auth" asp-action="QuickLogin" method="post">
+                    <input type="hidden" name="role" value="Student" />
+                    <button type="submit" class="dropdown-item text-success"><i class="bi bi-mortarboard me-2"></i>👨‍🎓 Học Viên (SV2026-001)</button>
+                </form>
+            </li>
+        </ul>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="btn btn-outline-light btn-sm me-2" asp-controller="Auth" asp-action="Login">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Đăng Nhập
+        </a>
+    </li>
+    <li class="nav-item dropdown">
+        <button class="btn btn-warning btn-sm dropdown-toggle fw-bold" type="button" data-bs-toggle="dropdown">
+            ⚡ Thử Nghiệm Ngay
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+            <li><h6 class="dropdown-header">Đăng nhập nhanh 1-Click:</h6></li>
+            <li>
+                <form asp-controller="Auth" asp-action="QuickLogin" method="post">
+                    <input type="hidden" name="role" value="Admin" />
+                    <button type="submit" class="dropdown-item text-danger"><i class="bi bi-shield-fill-check me-2"></i>👑 Quyền Admin</button>
+                </form>
+            </li>
+            <li>
+                <form asp-controller="Auth" asp-action="QuickLogin" method="post">
+                    <input type="hidden" name="role" value="Staff" />
+                    <button type="submit" class="dropdown-item text-primary"><i class="bi bi-person-video3 me-2"></i>👨‍🏫 Quyền Giảng Viên/Giám Khảo</button>
+                </form>
+            </li>
+            <li>
+                <form asp-controller="Auth" asp-action="QuickLogin" method="post">
+                    <input type="hidden" name="role" value="Student" />
+                    <button type="submit" class="dropdown-item text-success"><i class="bi bi-mortarboard me-2"></i>👨‍🎓 Quyền Học Viên</button>
+                </form>
+            </li>
+        </ul>
+    </li>
+}
+</ul>

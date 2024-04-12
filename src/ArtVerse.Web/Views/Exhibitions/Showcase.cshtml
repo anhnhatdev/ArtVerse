@@ -1,0 +1,70 @@
+﻿@model ArtVerse.Domain.Entities.Exhibition
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="bg-dark text-white py-5 mb-4">
+    <div class="container">
+        <span class="badge bg-warning text-dark mb-2 px-3 py-1">Virtual Exhibition</span>
+        <h1 class="display-5 fw-bold mb-3">@Model.Title</h1>
+        <p class="lead text-light text-opacity-75 mb-3">@Model.Description</p>
+        <div class="d-flex flex-wrap gap-4 text-secondary small">
+            <span><i class="bi bi-geo-alt-fill text-warning me-1"></i>@Model.Venue</span>
+            <span><i class="bi bi-calendar-event text-warning me-1"></i>@Model.StartDate.ToString("dd/MM/yyyy") - @Model.EndDate.ToString("dd/MM/yyyy")</span>
+            <span><i class="bi bi-images text-warning me-1"></i>@Model.Artworks.Count Tác phẩm trưng bày</span>
+        </div>
+    </div>
+</div>
+
+<div class="container py-3">
+    <div class="row g-4">
+        @foreach (var art in Model.Artworks)
+        {
+            var p = art.Painting;
+            var imgUrl = p?.Files?.FirstOrDefault(f => f.IsPrimary)?.FileUrl ?? p?.Files?.FirstOrDefault()?.FileUrl ?? "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=600";
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+                    <div class="position-relative" style="height: 280px;">
+                        <img src="@imgUrl" class="w-100 h-100 object-fit-cover" alt="@(p?.Title ?? "Tác phẩm")" />
+                        <button class="btn btn-sm btn-light position-absolute top-0 end-0 m-3 rounded-pill shadow-sm d-flex align-items-center gap-1"
+                                onclick="likeArtwork('@art.Id', '@Model.Id', this)">
+                            <i class="bi bi-heart-fill text-danger"></i>
+                            <span class="like-count fw-bold" id="like-@art.Id">@art.LikeCount</span>
+                        </button>
+                    </div>
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-1">@(p?.Title ?? "Tác phẩm nghệ thuật")</h5>
+                        <p class="text-muted small mb-2"><i class="bi bi-person me-1"></i>Họa sĩ: <strong>@(p?.Student?.FullName ?? "Nghệ sĩ ArtVerse")</strong></p>
+                        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                            <div>
+                                <span class="badge bg-light text-dark border">@(p?.Technique.ToString() ?? "Tranh nghệ thuật")</span>
+                            </div>
+                            <div class="fw-bold text-success">
+                                @(art.AskingPrice.HasValue ? string.Format("{0:N0} đ", art.AskingPrice.Value) : (p?.BasePrice.HasValue == true ? string.Format("{0:N0} đ", p.BasePrice.Value) : "Trưng bày"))
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function likeArtwork(artworkId, exhibitionId, btn) {
+    fetch(`/Exhibitions/Like?artworkId=${artworkId}&exhibitionId=${exhibitionId}`, {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById(`like-${artworkId}`).innerText = data.likes;
+            btn.classList.add('btn-danger', 'text-white');
+            btn.classList.remove('btn-light');
+        }
+    });
+}
+</script>
+}
