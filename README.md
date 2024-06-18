@@ -1,172 +1,112 @@
-﻿<div align="center">
+﻿# 🏛️ ArtVerse - Fine Arts Academy & Digital Exhibition Platform
 
-# 🎨 ArtVerse
-### Next-Generation Enterprise Art Academy & Digital Exhibition Platform
-
-[![.NET 8 LTS](https://img.shields.io/badge/.NET-8.0_LTS-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
-[![C# 12](https://img.shields.io/badge/C%23-12.0-239120?style=for-the-badge&logo=c-sharp&logoColor=white)](https://learn.microsoft.com/en-us/dotnet/csharp/)
-[![Clean Architecture](https://img.shields.io/badge/Architecture-Clean_Architecture-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white)](https://learn.microsoft.com/en-us/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures)
-[![Entity Framework Core 8](https://img.shields.io/badge/ORM-EF_Core_8-5C2D91?style=for-the-badge&logo=nuget&logoColor=white)](https://learn.microsoft.com/en-us/ef/core/)
-[![Bootstrap 5](https://img.shields.io/badge/UI-Bootstrap_5-7952B3?style=for-the-badge&logo=bootstrap&logoColor=white)](https://getbootstrap.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-success?style=for-the-badge)](LICENSE)
-
-<p align="center">
-  <b>ArtVerse</b> là nền tảng quản trị tổng thể dành cho các Học viện Nghệ thuật, Trung tâm Triển lãm và Sàn giao dịch Nghệ thuật số cao cấp. Hệ thống được xây dựng trên nền tảng <b>.NET 8 LTS</b> hiện đại theo kiến trúc <b>Clean Architecture</b>, áp dụng mẫu thiết kế <b>CQRS (Command Query Responsibility Segregation)</b> và mô hình hóa nghiệp vụ theo <b>Domain-Driven Design (DDD)</b>.
-</p>
-
-[Tính Năng Nổi Bật](#-tính-năng-nổi-bật) • [Kiến Trúc Hệ Thống](#-kiến-trúc-hệ-thống) • [Công Nghệ Sử Dụng](#-công-nghệ-sử-dụng) • [Hướng Dẫn Cài Đặt](#-hướng-dẫn-cài-đặt) • [Cấu Trúc Dự Án](#-cấu-trúc-thư-mục)
-
-</div>
+> ⚠️ **LƯU Ý QUAN TRỌNG & ĐÁNH GIÁ THỰC TẾ (ARCHITECTURAL DISCLAIMER & RETROSPECTIVE)**
+> 
+> * **Mục đích dự án:** Đây là một đồ án nghiên cứu kiến trúc phần mềm (Academic Proof-of-Concept / Technical Showcase), tập trung giải quyết bài toán mô hình hóa kiến trúc doanh nghiệp: **Clean Architecture 4 lớp, CQRS Pattern với MediatR, Dual-Authentication (Cookie + JWT), REST API và Single Page Application trên Next.js 14 App Router**.
+> * **Độ lệch nghiệp vụ so với thực tế (Domain Constraints):**
+>   1. *Định lượng hóa nghệ thuật bằng Rubric:* Trong thực tế mỹ thuật chuyên nghiệp, việc chấm điểm tác phẩm mang nặng tính cảm thụ thị giác và triết lý cá nhân; việc lượng hóa thành ma trận Rubric Sliders chỉ phù hợp cho môi trường đào tạo sinh viên (học phần cơ sở, đồ án chuyên ngành) chứ không đại diện cho cách đánh giá của các gallery hay triển lãm nghệ thuật hàn lâm thực tế.
+>   2. *Quy trình giám tuyển & Bản quyền:* Dự án mô phỏng luồng kiểm duyệt (Curation Pipeline) ở tầng logic phần mềm; ngoài đời thực, việc thẩm định tranh, cấp chứng thư giám định (Certificate of Authenticity - COA), ký gửi đấu giá và bản quyền tác giả đòi hỏi quy trình pháp lý, bảo hiểm và giám định vật lý phức tạp hơn rất nhiều.
+> * **Khuyến cáo sử dụng:** **Không sử dụng trực tiếp mã nguồn này làm sàn thương mại nghệ thuật thương phẩm (Production Marketplace)** mà chưa qua nghiên cứu sâu về nghiệp vụ pháp lý, kiểm định chất liệu và cơ chế đấu giá thực tế.
 
 ---
 
-## 🌟 Tính Năng Nổi Bật
+## 📌 1. Giới Thiệu Tổng Quan
 
-### 1. 📊 Trung Tâm Điều Hành & Phân Tích Dữ Liệu (Executive Analytics)
-* **Tổng quan KPI thời gian thực**: Theo dõi số lượng học viên, sản lượng tác phẩm, doanh thu niêm yết và các sự kiện đang diễn ra.
-* **Trực quan hóa dữ liệu với ApexCharts**:
-  * Biểu đồ miền (Area Chart) theo dõi tốc độ tăng trưởng tác phẩm sáng tác theo từng tháng.
-  * Biểu đồ Donut phân tích thị phần và phân bố kỹ thuật hội họa (Sơn dầu, Màu nước, Acrylic, Kỹ thuật số, Điêu khắc...).
-
-### 2. 🎨 Quản Lý Vòng Đời Tác Phẩm & Hàng Đợi Phê Duyệt (Artwork Lifecycle)
-* **Thư viện tranh trực quan (Card Grid & Modal Preview)**: Tìm kiếm và lọc tác phẩm tức thì theo kỹ thuật, tác giả và trạng thái.
-* **Pipeline tải lên & bảo hộ tác phẩm**: Đăng ký thông tin quyền tác giả, thông số kích thước, kỹ thuật và giá niêm yết thương mại.
-* **Hàng đợi kiểm duyệt chuyên môn (Review Queue)**: Dành riêng cho Hội đồng nghệ thuật thẩm định, phê duyệt hoặc từ chối tác phẩm kèm lý do chuyên môn.
-
-### 3. 🏆 Động Cơ Quản Lý Cuộc Thi & Phòng Chấm Thi Chuyên Sâu (Competition Engine)
-* **Quản trị cuộc thi nhiều vòng**: Thiết lập thể lệ, thời hạn, cơ cấu giải thưởng và hạn mức nộp bài.
-* **Phòng chấm thi Split-Screen**: Giao diện chia đôi màn hình độc quyền — một bên soi chi tiết tác phẩm chất lượng cao, một bên nhập điểm theo ma trận Rubric đa tiêu chí có trọng số.
-* **Bảng xếp hạng Podium tự động**: Tự động tổng hợp điểm số từ ban giám khảo và vinh danh Top 3 kèm huy chương.
-
-### 4. 🏛️ Triển Lãm Nghệ Thuật Số & Không Gian Trưng Bày (Virtual Exhibition)
-* **Không gian triển lãm chuyên đề**: Quản lý sự kiện, địa điểm, lịch trình và danh mục tranh trưng bày phong cách Masonry Gallery.
-* **Studio tuyển chọn tác phẩm (Curator Studio)**: Công cụ cho phép giám tuyển lựa chọn và sắp xếp thứ tự ưu tiên các tác phẩm vào sự kiện.
-* **Tương tác trực tiếp**: Thả tim (Like) thời gian thực, lưu danh sách yêu thích và hỗ trợ đăng ký sở hữu tác phẩm độc bản.
-
-### 5. 📚 Quản Lý Đào Tạo & Phân Bổ Học Viên (Academic Administration)
-* **Quản lý khóa học & lớp chuyên ngành**: Theo dõi niên khóa, học kỳ và kiểm soát sĩ số tối đa của từng lớp.
-* **Khung chương trình đào tạo**: Danh mục môn học nghệ thuật, số tín chỉ và chuyên đề học phần.
-* **Phân bổ học viên**: Ghi danh học viên vào các lớp học chuyên sâu chỉ với 1 thao tác.
-
-### 6. 👥 Quản Trị Học Viên & Phân Quyền Đa Tầng (User & RBAC Security)
-* Quản lý hồ sơ học viên, thông tin liên hệ và danh mục tác phẩm sáng tác cá nhân (Portfolio).
-* Hệ thống phân quyền dựa trên vai trò (**Role-Based Access Control - RBAC**): `Admin`, `Principal`, `Manager`, `Staff`, `Student`.
+**ArtVerse** là nền tảng quản lý đào tạo mỹ thuật, giám tuyển tác phẩm học viên và tổ chức triển lãm trực tuyến. Hệ thống kết hợp giữa **ASP.NET Core 8 Web API** làm lõi xử lý nghiệp vụ phía máy chủ và **Next.js 14 (App Router)** cung cấp giao diện phòng tranh tương tác cao cấp theo phong cách *Obsidian Dark Luxury*.
 
 ---
 
-## 🏗️ Kiến Trúc Hệ Thống
+## ✨ 2. Các Tính Năng & Phân Hệ Nổi Bật
 
-Dự án tuân thủ nghiêm ngặt nguyên lý **Clean Architecture**, phân tách thành 4 tầng độc lập theo hình đồng tâm nhằm đảm bảo khả năng mở rộng, kiểm thử và bảo trì lâu dài:
+### 🎨 Phân Hệ Mỹ Thuật & Thư Viện Tác Phẩm (`/artworks`)
+* **Phòng trưng bày đa chất liệu:** Hỗ trợ phân loại và tìm kiếm tức thì theo Sơn dầu, Màu nước, Sơn mài, Lụa, Acrylic, Nghệ thuật số (Digital Art), Than chì, Phấn màu.
+* **Soi chi tiết độ nét cao (HD Artwork Zoom):** Xem cận cảnh vệt cọ, bề mặt chất liệu và thuyết minh ý niệm sáng tác của tác giả.
+* **Studio nộp tác phẩm trực tuyến (`/studio/upload`):** Sinh viên tải lên tác phẩm với đầy đủ kích thước, năm sáng tác và định giá giao lưu.
 
-```text
-                               ┌───────────────────────────┐
-                               │       ArtVerse.Web        │ 
-                               │   (MVC / Razor / UI)      │
-                               └─────────────┬─────────────┘
-                                             │ depends on
-                               ┌─────────────▼─────────────┐
-                               │   ArtVerse.Application    │
-                               │   (CQRS / MediatR / DTOs) │
-                               └─────────────┬─────────────┘
-                                             │ depends on
-               ┌─────────────────────────────┼─────────────────────────────┐
-               │                                                           │
-┌──────────────▼──────────────┐                             ┌──────────────▼──────────────┐
-│       ArtVerse.Domain       │ (Core Business Logic)       │   ArtVerse.Infrastructure   │ (Data Access & Security)
-│  (Entities, Enums, Rules)   │                             │   (EF Core, Identity, Repos)│
-└─────────────────────────────┘                             └─────────────────────────────┘
-```
+### ⚖️ Phân Hệ Giám Tuyển & Kiểm Duyệt (`/curation/review-queue`)
+* **Hàng đợi xét duyệt giám tuyển:** Giám tuyển trưởng xem xét hồ sơ tác phẩm mới nộp, thực hiện thao tác **1-Click Phê duyệt / Từ chối** (kèm lý do hoàn thiện).
+* **Cấp mã lưu trữ viện:** Tác phẩm sau khi duyệt tự động được cấp mã định danh chuẩn (`AV-2026-XXXX`) để đưa vào thư viện mở hoặc triển lãm.
 
-* **`ArtVerse.Domain`**: Chứa toàn bộ các Entity nghiệp vụ thuần túy (`Student`, `Staff`, `Painting`, `Competition`, `Exhibition`, `Class`, `Subject`), Value Objects, Domain Enums và Exceptions. Hoàn toàn không phụ thuộc vào bất kỳ thư viện bên ngoài hay cơ sở dữ liệu nào.
-* **`ArtVerse.Application`**: Hiện thực các Use Cases thông qua mô hình **CQRS** sử dụng thư viện **MediatR**, các hợp đồng giao tiếp (Interfaces), DTOs và quy tắc xác thực.
-* **`ArtVerse.Infrastructure`**: Hiện thực hóa việc truy xuất dữ liệu với **Entity Framework Core 8**, hỗ trợ cơ chế đa hệ quản trị CSDL (**SQLite** / **SQL Server**), quản trị định danh người dùng qua **ASP.NET Core Identity** và triển khai các Repository.
-* **`ArtVerse.Web`**: Tầng giao diện người dùng ASP.NET Core MVC 8, kết hợp Razor Pages, Bootstrap 5, ApexCharts và cấu hình Dependency Injection trung tâm.
+### 🏆 Phân Hệ Cuộc Thi & Chấm Điểm Rubric (`/competitions`, `/jury/judging-room`)
+* **Hội đồng chấm thi Split-Screen:** Màn hình chia đôi chuyên dụng cho Ban Giám khảo: bên trái soi tác phẩm phân giải cao, bên phải trượt điểm theo từng tiêu chí Rubric (Ý tưởng, Kỹ thuật, Bố cục, Cảm xúc).
+* **Podium Bảng Vàng Tự Động:** Tính điểm bình quân theo trọng số và vinh danh Top 3 Quán quân - Giải Nhất 🥇, Giải Nhì 🥈, Giải Ba 🥉.
+
+### 🌟 Triển Lãm Số & Không Gian 3D (`/exhibitions`)
+* **Không gian triển lãm theo chủ đề:** Quản lý danh mục tranh theo từng sự kiện, lịch trình diễn ra và địa điểm ảo.
+* **Tương tác thời gian thực:** Thả tim (Like) tác phẩm, đếm lượt xem và lưu trữ bộ sưu tập yêu thích.
+
+### 🎓 Quản Lý Học Vụ & Lớp Học (`/academic/classes`)
+* **Chương trình đào tạo:** Quản lý môn học, số tín chỉ, niên khóa và phân bổ sinh viên vào các lớp chuyên đề hình họa, sơn dầu, digital concept art.
+
+### ⚡ 1-Click Role Switcher Demo (`/auth/login`)
+* Thanh chuyển đổi nhanh 5 vai trò (*Admin, Giám tuyển, Giám khảo, Học viên, Khách vãng lai*) giúp người đánh giá trải nghiệm toàn bộ luồng nghiệp vụ mà không cần nhập lại tài khoản.
 
 ---
 
-## 🛠️ Công Nghệ Sử Dụng
+## 🏗️ 3. Kiến Trúc Kỹ Thuật (Architecture & Tech Stack)
 
-| Hạng mục | Công nghệ / Thư viện | Mục đích sử dụng |
-| :--- | :--- | :--- |
-| **Framework Cốt Lõi** | [.NET 8.0 LTS](https://dotnet.microsoft.com/) / C# 12 | Nền tảng thực thi backend hiệu năng cao |
-| **Kiến Trúc** | Clean Architecture + CQRS + DDD | Chuẩn hóa thiết kế phần mềm doanh nghiệp |
-| **Điều Phối Tác Vụ** | [MediatR 12.3](https://github.com/jbogard/MediatR) | Phân tách Command / Query trong CQRS |
-| **Truy Xuất Dữ Liệu** | [Entity Framework Core 8.0](https://learn.microsoft.com/en-us/ef/core/) | ORM hiện đại, Linq Provider |
-| **Cơ Sở Dữ Liệu** | SQLite (Zero-config) / Microsoft SQL Server | Lưu trữ dữ liệu hệ thống |
-| **Bảo Mật & Xác Thực** | ASP.NET Core Identity 8.0 | Quản lý tài khoản, mã hóa mật khẩu & RBAC |
-| **Giao Diện Người Dùng** | Razor Pages + Bootstrap 5 + Bootstrap Icons | Giao diện Responsive hiện đại, trực quan |
-| **Biểu Đồ & Thống Kê** | [ApexCharts JS](https://apexcharts.com/) | Trực quan hóa dữ liệu Dashboard tương tác cao |
-
----
-
-## 🚀 Hướng Dẫn Cài Đặt & Khởi Chạy
-
-### 1. Yêu Cầu Tiền Đề
-* [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) (hoặc mới hơn).
-* Trình duyệt web hiện đại (Chrome, Edge, Firefox, Safari).
-
-### 2. Khởi Chạy Nhanh (Zero-Configuration)
-Mở Terminal tại thư mục gốc của dự án (`C:\final\ArtVerse`) và thực thi lệnh:
-
-```bash
-dotnet run --project src/ArtVerse.Web
-```
-
-👉 Mở trình duyệt và truy cập: **[http://localhost:5115](http://localhost:5115)**
-
-> 💡 **Khởi tạo tự động**: Khi ứng dụng khởi chạy lần đầu, cơ sở dữ liệu `artverse.db` và toàn bộ dữ liệu mẫu (Học viên, Tác phẩm, Cuộc thi, Triển lãm, Lớp học) sẽ **tự động được khởi tạo hoàn toàn**.
-
-### 3. Tài Khoản Quản Trị Mặc Định
-* **Email:** `admin@artverse.com`
-* **Mật khẩu:** `Admin@123`
-
----
-
-## 📁 Cấu Trúc Thư Mục
+Dự án được xây dựng theo chuẩn **Clean Architecture 4 Lớp kết hợp CQRS Pattern**:
 
 ```text
 ArtVerse/
-├── README.md                           # Tài liệu tổng quan dự án
-├── ArtVerse.sln                        # Visual Studio Solution File
-└── src/
-    ├── ArtVerse.Domain/                # Tầng Domain (Nghiệp vụ cốt lõi)
-    │   ├── Common/ (BaseEntity.cs)
-    │   ├── Entities/ (Student, Staff, Painting, Competition, Exhibition, Academic...)
-    │   ├── Enums/ (PaintingStatus, CompetitionStatus, ExhibitionStatus, UserRole...)
-    │   └── Exceptions/ (DomainException.cs)
-    │
-    ├── ArtVerse.Application/           # Tầng Application (CQRS & Use Cases)
-    │   ├── Common/Interfaces/ (Repository Contracts)
-    │   ├── Students/ (CQRS Commands, Queries, DTOs)
-    │   ├── Paintings/ (CQRS Commands, Queries, DTOs)
-    │   ├── Competitions/ (CQRS Commands, Queries, DTOs)
-    │   ├── Exhibitions/ (CQRS Commands, Queries, DTOs)
-    │   ├── Academic/ (CQRS Commands, Queries, DTOs)
-    │   └── Admin/ (CQRS Queries, Analytics DTOs)
-    │
-    ├── ArtVerse.Infrastructure/        # Tầng Infrastructure (Database & Identity)
-    │   ├── Data/ (ApplicationDbContext, ApplicationUser)
-    │   ├── Data/Seed/ (DbSeeder.cs - Khởi tạo dữ liệu mẫu ban đầu)
-    │   └── Repositories/ (Student, Painting, Competition, Exhibition, Academic, Analytics)
-    │
-    └── ArtVerse.Web/                   # Tầng Web (MVC & Presentation)
-        ├── Controllers/ (Home, Students, Artworks, Competitions, Exhibitions, Academic, Admin)
-        ├── Views/ (Razor Views giao diện người dùng)
-        ├── wwwroot/ (Static assets, CSS, JS, Uploads hình ảnh)
-        ├── Program.cs (Cấu hình DI, Authentication, Middleware Pipeline)
-        └── appsettings.json (Cấu hình kết nối cơ sở dữ liệu)
+├── src/
+│   ├── ArtVerse.Domain/          # Core Domain Entities, Value Objects, Enums, Exceptions
+│   ├── ArtVerse.Application/     # CQRS Commands/Queries (MediatR), DTOs, AutoMapper, Validation
+│   ├── ArtVerse.Infrastructure/  # EF Core 8 (SQLite/SQL Server), Identity, Repositories, JWT Token
+│   └── ArtVerse.Web/             # ASP.NET Core 8 Web API + Swagger OpenAPI + Dual-Auth
+│
+└── frontend/                     # Next.js 14 App Router, TypeScript, TailwindCSS, Zustand, Lucide
 ```
 
+### 🛠️ Chi Tiết Công Nghệ:
+| Lớp | Công nghệ cốt lõi | Vai trò đảm nhiệm |
+| :--- | :--- | :--- |
+| **Backend Framework** | [.NET 8.0 LTS](https://dotnet.microsoft.com/) / C# 12 | Xử lý nghiệp vụ tập trung, hiệu năng cao |
+| **Kiến trúc** | Clean Architecture + CQRS + DDD | Phân tách rành mạch Use Cases và Domain Model |
+| **Điều phối tác vụ** | [MediatR 12.x](https://github.com/jbogard/MediatR) | Phân tách xử lý Commands (ghi) và Queries (đọc) |
+| **ORM & Database** | EF Core 8.0 / SQLite / SQL Server | Quản lý dữ liệu quan hệ, tự động migrate & seed data |
+| **Bảo mật & Auth** | ASP.NET Core Identity & JWT Bearer | Hệ thống phân quyền RBAC đa tầng, Hybrid Cookie/JWT |
+| **API Documentation** | [Swagger / OpenAPI v1](https://swagger.io/) | Cung cấp tài liệu API tương tác tại `/swagger` |
+| **Frontend Framework** | [Next.js 14](https://nextjs.org/) (App Router) | Client SPA kết xuất nhanh, giao diện nghệ thuật cao cấp |
+| **Styling & State** | TailwindCSS + Zustand + Lucide Icons | Quản lý trạng thái đăng nhập và giao diện Obsidian Dark |
+
 ---
 
-## 🛡️ Tiêu Chuẩn Bảo Mật & Vận Hành
+## 🚀 4. Hướng Dẫn Cài Đặt & Khởi Chạy Hệ Thống
 
-* **Chống giả mạo yêu cầu (Anti-CSRF)**: Toàn bộ form thao tác dữ liệu đều được bảo vệ bởi thẻ `[ValidateAntiForgeryToken]`.
-* **Phân quyền truy cập đa tầng (Role-Based Authorization)**: Kiểm soát nghiêm ngặt các vùng dữ liệu nhạy cảm theo chính sách `AdminOnly`, `ManagerOrAbove`, `StaffOrAbove`, `StudentOnly`.
-* **Toàn vẹn dữ liệu (Soft Delete & Auditing)**: Kế thừa `BaseEntity` hỗ trợ tự động ghi nhận thời gian khởi tạo (`CreatedAt`), cập nhật (`UpdatedAt`) và cơ chế xóa mềm (`IsDeleted`).
+### Yêu Cầu Môi Trường:
+* [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
+* [Node.js 18+](https://nodejs.org/) & npm
+
+### Bước 1: Khởi chạy Backend (.NET 8 REST API)
+Mở Terminal tại thư mục `C:\final\ArtVerse` và chạy:
+```bash
+dotnet run --project src/ArtVerse.Web
+```
+* **API Server:** `http://localhost:5115`
+* **Tài liệu Swagger:** `http://localhost:5115/swagger`
+*(Hệ thống tự động khởi tạo cơ sở dữ liệu `artverse.db` và nạp sẵn 18+ tác phẩm mẫu, học viên, cuộc thi và triển lãm).*
+
+### Bước 2: Khởi chạy Frontend (Next.js 14)
+Mở một cửa sổ Terminal khác tại thư mục `C:\final\ArtVerse\frontend` và chạy:
+```bash
+npm install
+npm run dev
+```
+* **Giao diện người dùng:** **[http://localhost:3000](http://localhost:3000)**
 
 ---
 
-## 📜 Giấy Phép (License)
+## 🔑 5. Tài Khoản Thử Nghiệm Mặc Định (Demo Accounts)
 
+| Vai trò | Email | Mật khẩu | Chức năng chính |
+| :--- | :--- | :--- | :--- |
+| **Quản trị viên (Admin)** | `admin@artverse.edu.vn` | `Admin@123` | KPI Dashboard, Quản lý người dùng |
+| **Giám tuyển (Curator)** | `curator@artverse.edu.vn` | `Curator@123` | Duyệt tranh, tổ chức triển lãm |
+| **Giảng viên / Giám khảo** | `teacher@artverse.edu.vn` | `Teacher@123` | Quản lý lớp, chấm thi Rubric |
+| **Học viên xuất sắc** | `student@artverse.edu.vn` | `Student@123` | Upload tranh, nộp bài thi đấu |
+
+---
+
+## 📄 6. Giấy Phép (License)
 Dự án được phân phối dưới giấy phép **MIT License**.
